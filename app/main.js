@@ -6,14 +6,10 @@ console.log("Logs from your program will appear here!");
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
   socket.on("data", (data) => {
-    const request = data.toString();
-    if (request.startsWith("GET /")) {
-      const httpResponse = "HTTP/1.1 200 OK\r\n\r\n";
-      socket.write(httpResponse);
-    } else {
-      const httpResponse = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
-      socket.write(httpResponse);
-    }
+    const requestPath = data.toString().split(" ")[1];
+    const responseStatus =
+      requestPath === "/index.html" ? "200 OK" : "400 NOT FOUND";
+    socket.write(`HTTP/1.1 ${responseStatus}/r/n/r/n`);
     socket.end();
   });
   socket.on("close", () => {
