@@ -13,9 +13,9 @@ const server = net.createServer((socket) => {
       const responseStatus = requestPath === "/" ? "200 OK" : "404 Not Found";
       console.log(responseStatus);
       socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
-    } else if (stringData.contains("GET /echo/abc")) {
-      const responseStatus =
-        "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\nabc";
+    } else if (stringData.includes("/echo/")) {
+      const content = stringData.split("/echo/")[1];
+      const responseStatus = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 3\r\n\r\n${content}`;
       socket.write(responseStatus);
     }
     socket.end();
