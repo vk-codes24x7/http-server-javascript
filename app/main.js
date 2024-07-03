@@ -11,7 +11,7 @@ const server = net.createServer((socket) => {
     console.log(requestPath);
     if (stringData.startsWith("GET /")) {
       const responseStatus =
-        requestPath === "/index.html" ? "200 OK" : "404 NOT FOUND";
+        requestPath === "/index.html" ? "200 OK" : "404 Not Found";
       console.log(responseStatus);
       socket.write(`HTTP/1.1 ${responseStatus}\r\n\r\n`);
     }
