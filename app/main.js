@@ -18,8 +18,8 @@ const server = net.createServer((socket) => {
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
       );
-    } else if (url.includes("User-Agent:")) {
-      const userAgent = url.split("User-Agent:")[1];
+    } else if (url.includes("/user-agent")) {
+      const userAgent = stringData.split("User-Agent:")[1];
       console.log(`user Agent string - ${userAgent}`);
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
