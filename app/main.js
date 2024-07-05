@@ -7,23 +7,17 @@ console.log("Logs from your program will appear here!");
 const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     const stringData = data.toString();
-    console.log(`string data - ${stringData}`);
     const url = stringData.split(" ")[1];
     const headers = stringData.split("\r\n");
-    console.log(`headers - ${headers}`);
-    console.log(`url - ${url}`);
     if (url === "/") {
       socket.write("HTTP/1.1 200 OK\r\n\r\n");
     } else if (url.includes("/echo/")) {
       const content = url.split("/echo/")[1];
-      console.log(`content - ${content}`);
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
       );
     } else if (url === "/user-agent") {
       const userAgent = headers[2].split("User-Agent: ")[1];
-      console.log(`user Agent string - ${userAgent}`);
-      console.log(`userAgent.length - ${userAgent.length}`);
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
       );
