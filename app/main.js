@@ -9,10 +9,11 @@ const server = net.createServer((socket) => {
   socket.on("data", (data) => {
     const stringData = data.toString();
     const url = stringData.split(" ")[1];
+    const method = stringData.split(" ")[0];
     const headers = stringData.split("\r\n");
     if (url === "/") {
       socket.write("HTTP/1.1 200 OK\r\n\r\n");
-    } else if (url.startsWith("/files/")) {
+    } else if (url.startsWith("/files/") && method === "GET") {
       const directory = process.argv[3];
       const filename = url.split("/files/")[1];
       if (fs.existsSync(`${directory}/${filename}`)) {
@@ -22,6 +23,14 @@ const server = net.createServer((socket) => {
       } else {
         socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
       }
+    } else if (url.startsWith("/files/") && method === "POST") {
+      const directory = process.argv[3];
+      const filename = url.split("/files/")[1];
+      const url_path = `${directory}/${filename}`;
+      const body = headers[headers.length - 1];
+      fs.writeFileSync(url_path, body);
+      const httpResponse = "HTTP/1.1 201 Created\r\n\r\n";
+      socket.write(httpResponse);
     } else if (url.includes("/echo/")) {
       const content = url.split("/echo/")[1];
       socket.write(
