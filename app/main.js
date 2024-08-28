@@ -34,7 +34,7 @@ const server = net.createServer((socket) => {
       socket.write(httpResponse);
     } else if (url.includes("/echo/")) {
       const contents = url.split("/echo/")[1];
-      const match = httpRequest.match(/Accept-Encoding:\s*(.*)/);
+      const match = stringData.match(/Accept-Encoding:\s*(.*)/);
       const acceptEncoding = match ? match[1] : null;
       if (
         stringData.includes("Accept-Encoding:") &&
