@@ -12,7 +12,6 @@ const server = net.createServer((socket) => {
     const url = stringData.split(" ")[1];
     const method = stringData.split(" ")[0];
     const headers = stringData.split("\r\n");
-
     if (url === "/") {
       socket.write("HTTP/1.1 200 OK\r\n\r\n");
     } else if (url.startsWith("/files/") && method === "GET") {
