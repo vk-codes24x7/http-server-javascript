@@ -11,6 +11,7 @@ const server = net.createServer((socket) => {
     const url = stringData.split(" ")[1];
     const method = stringData.split(" ")[0];
     const headers = stringData.split("\r\n");
+
     if (url === "/") {
       socket.write("HTTP/1.1 200 OK\r\n\r\n");
     } else if (url.startsWith("/files/") && method === "GET") {
@@ -33,6 +34,11 @@ const server = net.createServer((socket) => {
       socket.write(httpResponse);
     } else if (url.includes("/echo/")) {
       const content = url.split("/echo/")[1];
+      if (stringData.includes("Accept-Encoding: gzip")) {
+        socket.write(
+          `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
+        );
+      }
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${content.length}\r\n\r\n${content}`
       );
