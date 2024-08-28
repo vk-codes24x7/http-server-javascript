@@ -35,16 +35,20 @@ const server = net.createServer((socket) => {
       socket.write(httpResponse);
     } else if (url.includes("/echo/")) {
       const contents = url.split("/echo/")[1];
+      console.log(`contents - ${contents}`);
       const match = stringData.match(/Accept-Encoding:\s*(.*)/);
       const acceptEncoding = match ? match[1] : null;
       if (
         stringData.includes("Accept-Encoding:") &&
         acceptEncoding.includes("gzip")
       ) {
+        console.log(`inside the if statement`);
         const bodyEncoded = zlib.gzipSync(contents);
         socket.write(
-          `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${bodyEncoded.length}\r\n\r\n${bodyEncoded}`
+          `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${bodyEncoded.length}\r\n\r\n`
         );
+        socket.write(bodyEncoded);
+        socket.end();
       }
       socket.write(
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contents.length}\r\n\r\n${contents}`
