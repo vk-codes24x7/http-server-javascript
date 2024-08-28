@@ -11,5 +11,7 @@
     ],
     "author": "",
     "license": "MIT",
-    "dependencies": {}
+    "dependencies": {
+        "zlib": "^1.0.5"
+    }
 }
