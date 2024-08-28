@@ -49,10 +49,11 @@ const server = net.createServer((socket) => {
         );
         socket.write(bodyEncoded);
         socket.end();
+      } else {
+        socket.write(
+          `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contents.length}\r\n\r\n${contents}`
+        );
       }
-      socket.write(
-        `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contents.length}\r\n\r\n${contents}`
-      );
     } else if (url === "/user-agent") {
       const userAgent = headers[2].split("User-Agent: ")[1];
       socket.write(
