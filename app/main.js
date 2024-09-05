@@ -1,7 +1,7 @@
 const net = require("net");
 const fs = require("fs");
 const zlib = require("zlib");
-import { constants } from "./constants";
+const constants = require("./constants");
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
