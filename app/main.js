@@ -1,10 +1,13 @@
 const net = require("net");
 const fs = require("fs");
 const zlib = require("zlib");
-const constants = require("./constants");
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
+
+const HTTP_OK = "HTTP/1.1 200 OK\r\n\r\n";
+const HTTP_NOT_FOUND = "HTTP/1.1 404 Not Found\r\n\r\n";
+const HTTP_CREATED_OK = "HTTP/1.1 201 Created\r\n\r\n";
 
 // Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
@@ -14,7 +17,7 @@ const server = net.createServer((socket) => {
     const method = stringData.split(" ")[0];
     const headers = stringData.split("\r\n");
     if (url === "/") {
-      socket.write(constants.HTTP_OK);
+      socket.write(HTTP_OK);
     } else if (url.startsWith("/files/") && method === "GET") {
       const directory = process.argv[3];
       const filename = url.split("/files/")[1];
@@ -23,7 +26,7 @@ const server = net.createServer((socket) => {
         const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${contents.length}\r\n\r\n${contents}\r\n`;
         socket.write(res);
       } else {
-        socket.write(constants.HTTP_NOT_FOUND);
+        socket.write(HTTP_NOT_FOUND);
       }
     } else if (url.startsWith("/files/") && method === "POST") {
       const directory = process.argv[3];
@@ -31,7 +34,7 @@ const server = net.createServer((socket) => {
       const url_path = `${directory}/${filename}`;
       const body = headers[headers.length - 1];
       fs.writeFileSync(url_path, body);
-      socket.write(constants.HTTP_CREATED_OK);
+      socket.write(HTTP_CREATED_OK);
     } else if (url.includes("/echo/")) {
       const contents = url.split("/echo/")[1];
       const match = stringData.match(/Accept-Encoding:\s*(.*)/);
@@ -57,7 +60,7 @@ const server = net.createServer((socket) => {
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
       );
     } else {
-      socket.write(constants.HTTP_NOT_FOUND);
+      socket.write(HTTP_NOT_FOUND);
     }
 
     socket.end();
