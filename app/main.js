@@ -1,6 +1,7 @@
 const net = require("net");
 const fs = require("fs");
 const zlib = require("zlib");
+import { constants } from "./constants";
 
 // You can use print statements as follows for debugging, they'll be visible when running tests.
 console.log("Logs from your program will appear here!");
@@ -13,7 +14,7 @@ const server = net.createServer((socket) => {
     const method = stringData.split(" ")[0];
     const headers = stringData.split("\r\n");
     if (url === "/") {
-      socket.write("HTTP/1.1 200 OK\r\n\r\n");
+      socket.write(constants.HTTP_OK);
     } else if (url.startsWith("/files/") && method === "GET") {
       const directory = process.argv[3];
       const filename = url.split("/files/")[1];
@@ -22,7 +23,7 @@ const server = net.createServer((socket) => {
         const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${contents.length}\r\n\r\n${contents}\r\n`;
         socket.write(res);
       } else {
-        socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+        socket.write(constants.HTTP_NOT_FOUND);
       }
     } else if (url.startsWith("/files/") && method === "POST") {
       const directory = process.argv[3];
@@ -30,18 +31,15 @@ const server = net.createServer((socket) => {
       const url_path = `${directory}/${filename}`;
       const body = headers[headers.length - 1];
       fs.writeFileSync(url_path, body);
-      const httpResponse = "HTTP/1.1 201 Created\r\n\r\n";
-      socket.write(httpResponse);
+      socket.write(constants.HTTP_CREATED_OK);
     } else if (url.includes("/echo/")) {
       const contents = url.split("/echo/")[1];
-      console.log(`contents - ${contents}`);
       const match = stringData.match(/Accept-Encoding:\s*(.*)/);
       const acceptEncoding = match ? match[1] : null;
       if (
         stringData.includes("Accept-Encoding:") &&
         acceptEncoding.includes("gzip")
       ) {
-        console.log(`inside the if statement`);
         const bodyEncoded = zlib.gzipSync(contents);
         socket.write(
           `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: text/plain\r\nContent-Length: ${bodyEncoded.length}\r\n\r\n`
@@ -59,7 +57,7 @@ const server = net.createServer((socket) => {
         `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`
       );
     } else {
-      socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+      socket.write(constants.HTTP_NOT_FOUND);
     }
 
     socket.end();
